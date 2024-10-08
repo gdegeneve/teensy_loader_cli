@@ -338,7 +338,17 @@ int soft_reboot(void)
 	if (!serial_handle) {
 		char *error = usb_strerror();
 		printf("Error opening USB device: %s\n", error);
-		return 0;
+		serial_handle = open_usb_device(0x16C0, 0x0486);
+		if (!serial_handle) {
+			char *error = usb_strerror();
+			printf("Error opening USB device: %s\n", error);
+			serial_handle = open_usb_device(0x16C0, 0x048c);
+			if (!serial_handle) {
+				char *error = usb_strerror();
+				printf("Error opening USB device: %s\n", error);
+				return 0;
+			}
+		}
 	}
 
 	char reboot_command[] = {0x86, 0x00, 0x00, 0x00, 0x00, 0x00, 0x08};
